@@ -2,6 +2,7 @@
 using EmployeeAccounting.DTO;
 using EmployeeAccounting.Interfaces;
 using EmployeeAccounting.Models;
+using EmployeeAccounting.Validators;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeAccounting.Controllers
@@ -68,19 +69,6 @@ namespace EmployeeAccounting.Controllers
         [ProducesResponseType(400)]
         public IActionResult CreatePost([FromBody] PostDto postDto)
         {
-            if (postDto == null)
-                return BadRequest(ModelState);
-
-            var post = _postRepository.GetPosts()
-                .Where(p => p.Name.Trim().ToUpper() == postDto.Name.TrimEnd().ToUpper())
-                .FirstOrDefault();
-
-            if (post != null)
-            {
-                ModelState.AddModelError("", "Post already exists");
-                return StatusCode(422, ModelState);
-            }
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 

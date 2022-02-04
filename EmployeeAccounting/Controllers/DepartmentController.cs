@@ -20,7 +20,7 @@ namespace EmployeeAccounting.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Department>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<DepartmentDto>))]
         public IActionResult GetDepartment()
         {
             var employees = _mapper.Map<List<DepartmentDto>>(_departmentRepository.GetDepartments());
@@ -32,7 +32,7 @@ namespace EmployeeAccounting.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(200, Type = typeof(Department))]
+        [ProducesResponseType(200, Type = typeof(DepartmentDto))]
         [ProducesResponseType(400)]
         public IActionResult GetDepartment(int id)
         {
@@ -48,7 +48,7 @@ namespace EmployeeAccounting.Controllers
         }
 
         [HttpGet("{departmentId}/Employee")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Department>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<DepartmentDto>))]
         [ProducesResponseType(400)]
         public IActionResult GetEmployeesByDepartment(int departmentId)
         {
@@ -103,10 +103,7 @@ namespace EmployeeAccounting.Controllers
         [ProducesResponseType(404)]
         public IActionResult UpdateDepartment(int id, [FromBody] DepartmentDto departmentDto)
         {
-            if (departmentDto == null)
-                return BadRequest(ModelState);
-
-            if (id != departmentDto.Id)
+           if (id != departmentDto.Id)
                 return BadRequest(ModelState);
 
             if (!_departmentRepository.DepartmentExist(id))

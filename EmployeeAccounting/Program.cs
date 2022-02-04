@@ -1,7 +1,11 @@
 using EmployeeAccounting;
 using EmployeeAccounting.Data;
+using EmployeeAccounting.DTO;
 using EmployeeAccounting.Interfaces;
 using EmployeeAccounting.Repository;
+using EmployeeAccounting.Validators;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +18,13 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+
+// Добавил валидаторы
+builder.Services.AddFluentValidation();
+builder.Services.AddScoped<IValidator<PostDto>, PostDtoValidator>();
+builder.Services.AddScoped<IValidator<DepartmentDto>, DepartmentDtoValidator>();
+builder.Services.AddScoped<IValidator<EmployeeDto>, EmployeeDtoValidator>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
