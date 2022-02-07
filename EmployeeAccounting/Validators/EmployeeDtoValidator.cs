@@ -1,4 +1,5 @@
 ﻿using EmployeeAccounting.DTO;
+using EmployeeAccounting.Interfaces;
 using FluentValidation;
 
 namespace EmployeeAccounting.Validators
