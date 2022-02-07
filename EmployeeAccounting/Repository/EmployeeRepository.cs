@@ -14,40 +14,40 @@ namespace EmployeeAccounting.Repository
             _context = context;
         }
 
-        public bool CreateEmployee(Employee employee)
+        public bool Create(Employee employee)
         {
             _context.Add(employee);
             return Save();
         }
 
-        public bool DeleteEmployee(Employee employee)
+        public bool Delete(Employee employee)
         {
             _context.Remove(employee);
             return Save();
         }
 
-        public bool EmployeeExist(int id)
+        public bool Exist(int id)
         {
             return _context.Employees.Any(e => e.Id == id);
         }
 
-        public Employee GetEmployee(int id)
+        public Employee GetById(int id)
         {
             return _context.Employees.Include(e => e.Department).Include(e => e.Post).Where(e => e.Id == id).FirstOrDefault();
         }
 
-        public ICollection<Employee> GetEmployees()
+        public ICollection<Employee> GetAll()
         {
             return _context.Employees.Include(e => e.Department).Include(e => e.Post).OrderBy(e => e.Id).ToList();
         }
-        public ICollection<Employee> GetEmployeesByDepartment(int departmentId)
+        public ICollection<Employee> GetByDepartmentId(int departmentId)
         {
-            return GetEmployees().Where(e => e.Department.Id == departmentId).OrderBy(e => e.Id).ToList();
+            return GetAll().Where(e => e.Department.Id == departmentId).OrderBy(e => e.Id).ToList();
         }
 
-        public ICollection<Employee> GetEmployeesByPost(int postId)
+        public ICollection<Employee> GetByPostId(int postId)
         {
-            return GetEmployees().Where(e => e.Post.Id == postId).OrderBy(e => e.Id).ToList();
+            return GetAll().Where(e => e.Post.Id == postId).OrderBy(e => e.Id).ToList();
         }
 
         public bool Save()
@@ -56,7 +56,7 @@ namespace EmployeeAccounting.Repository
             return saved > 0;   //  ? true  : false;
         }
 
-        public bool UpdateEmployee(Employee employee)
+        public bool Update(Employee employee)
         {
             _context.Update(employee);
             return Save();

@@ -13,39 +13,39 @@ namespace EmployeeAccounting.Repository
             _context = context;
         }
 
-        public bool PostExist(int id)
+        public bool Exist(int id)
         {
             return _context.Posts.Any(p => p.Id == id);
         }
 
-        public Post GetPost(int id)
+        public Post GetById(int id)
         {
             return _context.Posts.Where(p => p.Id == id).FirstOrDefault();
         }
 
-        public ICollection<Post> GetPosts()
+        public ICollection<Post> GetAll()
         {
             return _context.Posts.OrderBy(p => p.Id).ToList();
         }
 
-        public ICollection<Employee> GetEmployeesByPost(int postId)
+        public ICollection<Employee> GetEmployeesByPostId(int postId)
         {
             return _context.Employees.Where(e => e.Post.Id == postId).OrderBy(e => e.Id).ToList();
         }
 
-        public bool CreatePost(Post post)
+        public bool Create(Post post)
         {
             _context.Add(post);
             return Save();
         }
 
-        public bool UpdatePost(Post post)
+        public bool Update(Post post)
         {
             _context.Update(post);
             return Save();
         }
 
-        public bool DeletePost(Post post)
+        public bool Delete(Post post)
         {
             _context.Remove(post);
             return Save();

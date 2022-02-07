@@ -27,7 +27,7 @@ namespace EmployeeAccounting.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<Employee>))]
         public IActionResult GetEmployees()
         {
-            var employees = _mapper.Map<List<EmployeeDto>>(_employeeRepository.GetEmployees());
+            var employees = _mapper.Map<List<EmployeeDto>>(_employeeRepository.GetAll());
 
             if(!ModelState.IsValid)
                 BadRequest(ModelState);
@@ -40,10 +40,10 @@ namespace EmployeeAccounting.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetEmployee(int id)
         {
-            if(!_employeeRepository.EmployeeExist(id))
+            if(!_employeeRepository.Exist(id))
                 return NotFound();
 
-            var employee = _mapper.Map<EmployeeDto>( _employeeRepository.GetEmployee(id));
+            var employee = _mapper.Map<EmployeeDto>( _employeeRepository.GetById(id));
 
             if(!ModelState.IsValid)
                 return BadRequest(ModelState);  
@@ -56,10 +56,10 @@ namespace EmployeeAccounting.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetEmployeesByDepartment(int departmentId)
         {
-            if (!_departmentRepository.DepartmentExist(departmentId))
+            if (!_departmentRepository.Exist(departmentId))
                 return NotFound();
 
-            var employees = _mapper.Map<List<EmployeeDto>>(_employeeRepository.GetEmployeesByDepartment(departmentId));
+            var employees = _mapper.Map<List<EmployeeDto>>(_employeeRepository.GetByDepartmentId(departmentId));
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -72,10 +72,10 @@ namespace EmployeeAccounting.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetEmployeesByPost(int postId)
         {
-            if (!_postRepository.PostExist(postId))
+            if (!_postRepository.Exist(postId))
                 return NotFound();
 
-            var employees = _mapper.Map<List<EmployeeDto>>(_employeeRepository.GetEmployeesByPost(postId));
+            var employees = _mapper.Map<List<EmployeeDto>>(_employeeRepository.GetByPostId(postId));
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -88,9 +88,6 @@ namespace EmployeeAccounting.Controllers
         [ProducesResponseType(400)]
         public IActionResult CreateEmployee([FromBody] EmployeeDto employeeDto)
         {
-            if (employeeDto == null)
-                return BadRequest(ModelState);
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -98,7 +95,7 @@ namespace EmployeeAccounting.Controllers
             employeeMap.DateModified = DateTime.Now;
 
 
-            if (!_employeeRepository.CreateEmployee(employeeMap))
+            if (!_employeeRepository.Create(employeeMap))
             {
                 ModelState.AddModelError("", "Something went wrong while savin");
                 return StatusCode(500, ModelState);
@@ -113,13 +110,10 @@ namespace EmployeeAccounting.Controllers
         [ProducesResponseType(404)]
         public IActionResult UpdateEmployee(int id, [FromBody] EmployeeDto employeeDto)
         {
-            if (employeeDto == null)
-                return BadRequest(ModelState);
-
             if (id != employeeDto.Id)
                 return BadRequest(ModelState);
 
-            if (!_employeeRepository.EmployeeExist(id))
+            if (!_employeeRepository.Exist(id))
                 return NotFound();
 
             if (!ModelState.IsValid)
@@ -128,7 +122,7 @@ namespace EmployeeAccounting.Controllers
             var employeeMap = _mapper.Map<Employee>(employeeDto);
             employeeMap.DateModified = DateTime.Now; 
 
-            if (!_employeeRepository.UpdateEmployee(employeeMap))
+            if (!_employeeRepository.Update(employeeMap))
             {
                 ModelState.AddModelError("", "Something went wrong updating employee");
                 return StatusCode(500, ModelState);
@@ -143,7 +137,7 @@ namespace EmployeeAccounting.Controllers
         [ProducesResponseType(404)]
         public IActionResult DeleteEmployee(int id)
         {
-            if (!_employeeRepository.EmployeeExist(id))
+            if (!_employeeRepository.Exist(id))
             {
                 return NotFound();
             }
@@ -151,7 +145,7 @@ namespace EmployeeAccounting.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (!_employeeRepository.DeleteEmployee(_employeeRepository.GetEmployee(id)))
+            if (!_employeeRepository.Delete(_employeeRepository.GetById(id)))
             {
                 ModelState.AddModelError("", "Something went wrong when deleting employee");
             }

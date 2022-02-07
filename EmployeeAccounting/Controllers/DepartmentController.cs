@@ -23,7 +23,7 @@ namespace EmployeeAccounting.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<DepartmentDto>))]
         public IActionResult GetDepartment()
         {
-            var employees = _mapper.Map<List<DepartmentDto>>(_departmentRepository.GetDepartments());
+            var employees = _mapper.Map<List<DepartmentDto>>(_departmentRepository.GetAll());
 
             if(!ModelState.IsValid)
                 BadRequest(ModelState);
@@ -36,10 +36,10 @@ namespace EmployeeAccounting.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetDepartment(int id)
         {
-            if(!_departmentRepository.DepartmentExist(id))
+            if(!_departmentRepository.Exist(id))
                 return NotFound();
 
-            var department = _mapper.Map<DepartmentDto>(_departmentRepository.GetDepartment(id));
+            var department = _mapper.Map<DepartmentDto>(_departmentRepository.GetById(id));
 
             if(!ModelState.IsValid)
                 return BadRequest(ModelState);  
@@ -52,10 +52,10 @@ namespace EmployeeAccounting.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetEmployeesByDepartment(int departmentId)
         {
-            if (!_departmentRepository.DepartmentExist(departmentId))
+            if (!_departmentRepository.Exist(departmentId))
                 return NotFound();
 
-            var employees = _mapper.Map<List<EmployeeDto>>(_departmentRepository.GetEmployeesByDepartment(departmentId));
+            var employees = _mapper.Map<List<EmployeeDto>>(_departmentRepository.GetEmployeesByDepartmentId(departmentId));
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -71,7 +71,7 @@ namespace EmployeeAccounting.Controllers
             if (departmentDto == null)
                 return BadRequest(ModelState);
 
-            var department = _departmentRepository.GetDepartments()
+            var department = _departmentRepository.GetAll()
                 .Where(d => d.Name.Trim().ToUpper() == departmentDto.Name.TrimEnd().ToUpper())
                 .FirstOrDefault();
 
@@ -88,7 +88,7 @@ namespace EmployeeAccounting.Controllers
             departmentMap.DateModified = DateTime.Now;
 
 
-            if (!_departmentRepository.CreateDepartment(departmentMap))
+            if (!_departmentRepository.Create(departmentMap))
             {
                 ModelState.AddModelError("", "Something went wrong while savin");
                 return StatusCode(500, ModelState);
@@ -106,7 +106,7 @@ namespace EmployeeAccounting.Controllers
            if (id != departmentDto.Id)
                 return BadRequest(ModelState);
 
-            if (!_departmentRepository.DepartmentExist(id))
+            if (!_departmentRepository.Exist(id))
                 return NotFound();
 
             if (!ModelState.IsValid)
@@ -115,7 +115,7 @@ namespace EmployeeAccounting.Controllers
             var departmentMap = _mapper.Map<Department>(departmentDto);
             departmentMap.DateModified = DateTime.Now; 
 
-            if (!_departmentRepository.UpdateDepartment(departmentMap))
+            if (!_departmentRepository.Update(departmentMap))
             {
                 ModelState.AddModelError("", "Something went wrong updating department");
                 return StatusCode(500, ModelState);
@@ -130,7 +130,7 @@ namespace EmployeeAccounting.Controllers
         [ProducesResponseType(404)]
         public IActionResult DeleteDepartment(int id)
         {
-            if (!_departmentRepository.DepartmentExist(id))
+            if (!_departmentRepository.Exist(id))
             {
                 return NotFound();
             }
@@ -138,7 +138,7 @@ namespace EmployeeAccounting.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (!_departmentRepository.DeleteDepartment(_departmentRepository.GetDepartment(id)))
+            if (!_departmentRepository.Delete(_departmentRepository.GetById(id)))
             {
                 ModelState.AddModelError("", "Something went wrong when deleting department");
             }
